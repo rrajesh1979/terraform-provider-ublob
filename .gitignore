@@ -2,3 +2,5 @@
 dist/
 *.key
 .idea/
+vendor/
+/terraform-provider-ublob
