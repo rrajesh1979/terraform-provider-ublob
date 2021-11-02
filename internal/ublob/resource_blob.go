@@ -27,17 +27,17 @@ func resourceOrder() *schema.Resource {
 		UpdateContext: resourceBlobUpdate,
 		DeleteContext: resourceBlobDelete,
 		Schema: map[string]*schema.Schema{
-			"bucket": &schema.Schema{
+			"cloud": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"cloud": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
+			},
+			"bucket": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 	}
@@ -49,10 +49,10 @@ func resourceBlobCreate(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	bucket := d.Get("bucket").(string)
-	//cloud := d.Get("cloud").(string)
-	//region := d.Get("region").(string)
-	cloud := "AWS"
-	region := "us-east-1"
+	cloud := d.Get("cloud").(string)
+	region := d.Get("region").(string)
+	//cloud := "AWS"
+	//region := "us-east-1"
 
 	bucketURL := ""
 
@@ -84,6 +84,11 @@ func resourceBlobCreate(ctx context.Context, d *schema.ResourceData, m interface
 		} else {
 			fmt.Println(err.Error())
 		}
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unable to create bucket",
+			Detail:   "Unable to create bucket " + bucketURL,
+		})
 	}
 
 	fmt.Println(result)
@@ -112,6 +117,54 @@ func resourceBlobUpdate(ctx context.Context, d *schema.ResourceData, m interface
 func resourceBlobDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
+
+	bucket := d.Get("bucket").(string)
+	cloud := d.Get("cloud").(string)
+	region := d.Get("region").(string)
+	bucketURL := d.Id()
+
+	if cloud == "AWS" {
+		bucketURL = "s3://" + bucket + "?" + region
+		log.Println("bucketURL : {}", bucketURL)
+	}
+
+	sess := session.Must(session.NewSession(&aws.Config{
+		MaxRetries: aws.Int(3),
+	}))
+	svc := s3.New(sess, &aws.Config{
+		Region: aws.String(region),
+	})
+	input := &s3.DeleteBucketInput{
+		Bucket: aws.String(bucket),
+	}
+	result, err := svc.DeleteBucket(input)
+
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			fmt.Println(err.Error())
+		}
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unable to delete bucket",
+			Detail:   "Unable to delete bucket " + bucketURL,
+		})
+
+	}
+
+	fmt.Println(result)
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	// d.SetId("") is automatically called assuming delete returns no errors, but
+	// it is added here for explicitness.
+	d.SetId("")
 
 	return diags
 }

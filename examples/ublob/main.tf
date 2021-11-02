@@ -19,6 +19,6 @@ output "ublob_meta" {
 ##  region = "us-east-1"
 #}
 #
-#output "unbob_out" {
+#output "ublob_out" {
 #  value = ublob_blob.ublob
 #}

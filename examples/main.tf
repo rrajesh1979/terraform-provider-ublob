@@ -17,12 +17,12 @@ output "myblob" {
   value = module.myblob.ublob_meta
 }
 
-resource "ublob_blob" "ublob" {
-  bucket = "rrajesh1979-003"
+#resource "ublob_blob" "ublob" {
+#  bucket = "rrajesh1979-004"
 #  cloud = "AWS"
 #  region = "us-east-1"
-}
-
-output "unbob_out" {
-  value = ublob_blob.ublob
-}
+#}
+#
+#output "ublob_out" {
+#  value = ublob_blob.ublob
+#}
