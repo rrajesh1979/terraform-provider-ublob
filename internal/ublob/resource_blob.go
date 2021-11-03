@@ -2,7 +2,6 @@ package ublob
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"log"
@@ -16,6 +15,9 @@ import (
 
 	//gcp-sdk-go
 	"cloud.google.com/go/storage"
+
+	//azure-sdk-go
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 )
 
 func resourceOrder() *schema.Resource {
@@ -39,15 +41,19 @@ func resourceOrder() *schema.Resource {
 			},
 			"storage_class": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
 			},
 			"project_id": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
 			},
-			"container": {
+			"storage_account": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
+			},
+			"storage_account_key": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		},
 	}
@@ -63,6 +69,8 @@ func resourceBlobCreate(ctx context.Context, d *schema.ResourceData, m interface
 	region := d.Get("region").(string)
 	storageClass := d.Get("storage_class").(string)
 	projectID := d.Get("project_id").(string)
+	storageAccount := d.Get("storage_account").(string)
+	storageAccountKey := d.Get("storage_account_key").(string)
 
 	bucketURL := ""
 
@@ -74,6 +82,10 @@ func resourceBlobCreate(ctx context.Context, d *schema.ResourceData, m interface
 		bucketURL = "gs://" + bucket
 		log.Println("bucketURL : {}", bucketURL)
 		diags = gcpCreateBucket(projectID, storageClass, region, bucket, diags)
+	} else if cloud == "AZURE" {
+		bucketURL = storageAccount + "/" + bucket
+		log.Println("bucketURL : {}", bucketURL)
+		diags = azureCreateBucket(storageAccount, storageAccountKey, bucket, diags)
 	}
 
 	d.SetId(bucketURL)
@@ -104,6 +116,9 @@ func resourceBlobDelete(ctx context.Context, d *schema.ResourceData, m interface
 	bucket := d.Get("bucket").(string)
 	cloud := d.Get("cloud").(string)
 	region := d.Get("region").(string)
+	storageAccount := d.Get("storage_account").(string)
+	storageAccountKey := d.Get("storage_account_key").(string)
+
 	bucketURL := d.Id()
 
 	if cloud == "AWS" {
@@ -115,9 +130,9 @@ func resourceBlobDelete(ctx context.Context, d *schema.ResourceData, m interface
 		log.Println("bucketURL : {}", bucketURL)
 		diags = gcpDeleteBucket(bucket, diags)
 	} else if cloud == "AZURE" {
-		bucketURL = "gs://" + bucket
+		bucketURL = storageAccount + "/" + bucket
 		log.Println("bucketURL : {}", bucketURL)
-		diags = gcpDeleteBucket(bucket, diags)
+		diags = azureDeleteBucket(storageAccount, storageAccountKey, bucket, diags)
 	}
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
@@ -143,10 +158,10 @@ func awsDeleteBucket(region string, bucket string, diags diag.Diagnostics, bucke
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			default:
-				fmt.Println(aerr.Error())
+				log.Println(aerr.Error())
 			}
 		} else {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 		}
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -155,7 +170,7 @@ func awsDeleteBucket(region string, bucket string, diags diag.Diagnostics, bucke
 		})
 
 	}
-	fmt.Println(result)
+	log.Println(result)
 	return diags
 }
 
@@ -174,14 +189,14 @@ func awsCreateBucket(region string, bucket string, diags diag.Diagnostics) diag.
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case s3.ErrCodeBucketAlreadyExists:
-				fmt.Println(s3.ErrCodeBucketAlreadyExists, aerr.Error())
+				log.Println(s3.ErrCodeBucketAlreadyExists, aerr.Error())
 			case s3.ErrCodeBucketAlreadyOwnedByYou:
-				fmt.Println(s3.ErrCodeBucketAlreadyOwnedByYou, aerr.Error())
+				log.Println(s3.ErrCodeBucketAlreadyOwnedByYou, aerr.Error())
 			default:
-				fmt.Println(aerr.Error())
+				log.Println(aerr.Error())
 			}
 		} else {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 		}
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -189,7 +204,7 @@ func awsCreateBucket(region string, bucket string, diags diag.Diagnostics) diag.
 			Detail:   "Unable to create bucket " + bucket,
 		})
 	}
-	fmt.Println(result)
+	log.Println(result.String())
 	return diags
 }
 
@@ -197,9 +212,14 @@ func gcpCreateBucket(projectID string, storageClass string, region string, bucke
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		fmt.Errorf("storage.NewClient: %v", err)
+		log.Println("storage.NewClient: {}", err)
 	}
-	defer client.Close()
+	defer func(client *storage.Client) {
+		err := client.Close()
+		if err != nil {
+			log.Println("Error closing client")
+		}
+	}(client)
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
@@ -210,9 +230,9 @@ func gcpCreateBucket(projectID string, storageClass string, region string, bucke
 	}
 	bucket := client.Bucket(bucketName)
 	if err := bucket.Create(ctx, projectID, storageClassAndLocation); err != nil {
-		fmt.Errorf("Bucket(%q).Create: %v", bucketName, err)
+		log.Println("Bucket create error", bucketName, err)
 	}
-	fmt.Errorf("Created bucket %v in %v with storage class %v\n", bucketName, storageClassAndLocation.Location, storageClassAndLocation.StorageClass)
+	log.Println("Created bucket with storage class", bucketName, storageClassAndLocation.Location, storageClassAndLocation.StorageClass)
 
 	return diags
 }
@@ -221,18 +241,70 @@ func gcpDeleteBucket(bucketName string, diags diag.Diagnostics) diag.Diagnostics
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		fmt.Errorf("storage.NewClient: %v", err)
+		log.Println("Error creating storage.NewClient {}", err)
 	}
-	defer client.Close()
+	defer func(client *storage.Client) {
+		err := client.Close()
+		if err != nil {
+			log.Println("Error closing client")
+		}
+	}(client)
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
 	bucket := client.Bucket(bucketName)
 	if err := bucket.Delete(ctx); err != nil {
-		fmt.Errorf("Bucket(%q).Delete: %v", bucketName, err)
+		log.Println("Bucket.Delete Error: {} {}", bucketName, err)
 	}
-	fmt.Errorf("Deleted bucket %v \n", bucketName)
+	log.Println("Deleted bucket {}", bucketName)
+
+	return diags
+}
+
+func azureCreateBucket(storageAccount string, storageAccountKey string, bucket string, diags diag.Diagnostics) diag.Diagnostics {
+
+	cred, err := azblob.NewSharedKeyCredential(storageAccount, storageAccountKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	service, err := azblob.NewServiceClient("https://"+storageAccount+".blob.core.windows.net/", cred, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+
+	container := service.NewContainerClient(bucket)
+
+	_, err = container.Create(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return diags
+}
+
+func azureDeleteBucket(storageAccount string, storageAccountKey string, bucket string, diags diag.Diagnostics) diag.Diagnostics {
+	cred, err := azblob.NewSharedKeyCredential(storageAccount, storageAccountKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	service, err := azblob.NewServiceClient("https://"+storageAccount+".blob.core.windows.net/", cred, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+
+	container := service.NewContainerClient(bucket)
+
+	_, err = container.Delete(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return diags
 }

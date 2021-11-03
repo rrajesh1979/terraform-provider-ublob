@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	cloud.google.com/go/storage v1.16.1
+	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v0.1.0
 	github.com/aws/aws-sdk-go v1.40.34
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
 )
@@ -11,6 +12,8 @@ require (
 require (
 	cloud.google.com/go v0.94.0 // indirect
 	github.com/Azure/azure-pipeline-go v0.2.3 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v0.19.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v0.7.0 // indirect
 	github.com/Azure/azure-storage-blob-go v0.14.0 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.11.20 // indirect
