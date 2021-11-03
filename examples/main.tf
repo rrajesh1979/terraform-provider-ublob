@@ -18,9 +18,21 @@ output "myblob" {
 }
 
 #resource "ublob_blob" "ublob" {
-#  bucket = "rrajesh1979-004"
+#  bucket = "rrajesh1979-005"
 #  cloud = "AWS"
-#  region = "us-east-1"
+#  region = "us-east-2"
+#}
+#
+#output "ublob_out" {
+#  value = ublob_blob.ublob
+#}
+
+#resource "ublob_blob" "ublob" {
+#  bucket = "rrajesh1979-005"
+#  cloud = "GCP"
+#  region = "asia"
+#  project_id = "peer-poc"
+#  storage_class = "Standard"
 #}
 #
 #output "ublob_out" {
