@@ -27,23 +27,15 @@ Menu
 Pre-requisites
 ----
 1. Terraform
-```bash
-brew install hashicorp/tap/terraform
-```
 2. Go SDK
-```bash
-brew install go
-```
 3. AWS CLI
-```bash
-brew install awscli
-```
 4. GCP CLI
-```bash
-brew install --cask google-cloud-sdk
-```
 5. AZURE CLI
 ```bash
+brew install hashicorp/tap/terraform
+brew install go
+brew install awscli
+brew install --cask google-cloud-sdk
 brew update && brew install azure-cli
 ```
 
@@ -99,37 +91,32 @@ output "ublob_az_out" {
 Usage
 ----
 
+Cloud provider specific configuration
+- AWS
 ```bash
+aws configure
+```
+
+- GCP
+```bash
+gcloud auth application-default login
+```
+
+- AZURE
+```bash
+az login
+az account set --subscription ""
+##Setup environment variables
+export TF_VAR_storage_account_key="<<Your storage account key>>"
+```
+
+```bash
+#usage
 make install
 cd examples
 terraform init && terraform apply --auto-approve
 ```
 
-AWS
-1. CLI login
-```bash
-aws configure
-```
-2. 
-
-GCP
-1. CLI login
-```bash
-gcloud auth application-default login
-```
-2. 
-
-AZURE
-
-1. CLI login
-```bash
-az login
-az account set --subscription ""
-```
-2. Setup requirement variables
-```bash
-export TF_VAR_storage_account_key="<<Your storage account key>>"
-```
-
 Future enhancements
 ----
+- This is 
