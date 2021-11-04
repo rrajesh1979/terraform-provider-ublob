@@ -13,23 +13,43 @@
 </p>
 
 
-<h3 align="center">Experimental Terraform provider (custom) </h3>
-<p align="center">One provider to rule them all! Create an AWS S3 bucket, Azure Storage container, GCP cloud storage bucket all using this provider.</p>
+<h3>Experimental Terraform provider (custom) </h3>
+<p>One provider to rule them all! Create an AWS S3 bucket, Azure Storage container, GCP cloud storage bucket all using this provider.</p>
 
 Menu
 ----
 
 - [Pre-requisites](#pre-reqs)
-- [Examples](#examples)
+- [Example configurations](#examples)
 - [Future enhancements](#future)
+- [Usage](#usage)
 
 Pre-requisites
 ----
+1. Terraform
+```bash
+brew install hashicorp/tap/terraform
+```
+2. Go SDK
+```bash
+brew install go
+```
+3. AWS CLI
+```bash
+brew install awscli
+```
+4. GCP CLI
+```bash
+brew install --cask google-cloud-sdk
+```
+5. AZURE CLI
+```bash
+brew update && brew install azure-cli
+```
 
-
-Examples
+Example configurations
 ----
-###AWS
+AWS
 ```terraform
 resource "ublob_blob" "aws_blob" {
   bucket = "rrajesh1979-007"
@@ -42,7 +62,7 @@ output "ublob_aws_out" {
 }
 ```
 
-###GCP
+GCP
 ```terraform
 resource "ublob_blob" "gcp_blob" {
   bucket = "rrajesh1979-001"
@@ -57,7 +77,7 @@ output "ublob_gcp_out" {
 }
 ```
 
-###AZURE
+AZURE
 ```terraform
 variable "storage_account_key" {
   type = string
@@ -74,6 +94,41 @@ resource "ublob_blob" "az_blob" {
 output "ublob_az_out" {
   value = ublob_blob.az_blob
 }
+```
+
+Usage
+----
+
+```bash
+make install
+cd examples
+terraform init && terraform apply --auto-approve
+```
+
+AWS
+1. CLI login
+```bash
+aws configure
+```
+2. 
+
+GCP
+1. CLI login
+```bash
+gcloud auth application-default login
+```
+2. 
+
+AZURE
+
+1. CLI login
+```bash
+az login
+az account set --subscription ""
+```
+2. Setup requirement variables
+```bash
+export TF_VAR_storage_account_key="<<Your storage account key>>"
 ```
 
 Future enhancements
