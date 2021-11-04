@@ -119,4 +119,11 @@ terraform init && terraform apply --auto-approve
 
 Future enhancements
 ----
-- This is 
+- This is an experimental Terraform provider that allows users to create a storage bucket in any of the cloud platforms - AWS, GCP and Azure
+- The current release is a basic version that only supports
+  - Create resource
+  - Destroy resource
+- Future enhancements would bring in
+  - Enhanced Read, Update, Import
+  - Support for fine-grained attributes
+- Add additional test cases
