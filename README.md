@@ -19,9 +19,9 @@
 Menu
 ----
 
-- [Pre-requisites](#pre-reqs)
-- [Example configurations](#examples)
-- [Future enhancements](#future)
+- [Pre-requisites](#pre-requisites)
+- [Example configurations](#example-configurations)
+- [Future enhancements](#future-enhancements)
 - [Usage](#usage)
 
 Pre-requisites
