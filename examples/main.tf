@@ -13,10 +13,10 @@ module "myblob" {
   source = "./ublob"
 }
 
-output "myblob" {
-  value = module.myblob.ublob_meta
-}
-
+#output "myblob" {
+#  value = module.myblob.ublob_meta
+#}
+#
 #resource "ublob_blob" "aws_blob" {
 #  bucket = "rrajesh1979-007"
 #  cloud = "AWS"
