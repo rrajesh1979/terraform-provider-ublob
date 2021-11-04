@@ -1,4 +1,4 @@
-# terraform-provider-ublob
+# UBLOB - Universal blob storage
 
 <p>
 <img alt="GitHub" src="https://img.shields.io/github/license/rrajesh1979/terraform-provider-ublob">
@@ -11,3 +11,70 @@
 <a href="https://img.shields.io/github/contributors/rrajesh1979/terraform-provider-ublob"><img alt="GitHub commits" src="https://img.shields.io/github/contributors/rrajesh1979/terraform-provider-ublob"></a>
 <a href="https://img.shields.io/github/commit-activity/w/rrajesh1979/terraform-provider-ublob"><img alt="GitHub contributors" src="https://img.shields.io/github/commit-activity/w/rrajesh1979/terraform-provider-ublob"></a>
 </p>
+
+
+<h3 align="center">Experimental Terraform provider (custom) </h3>
+<p align="center">One provider to rule them all! Create an AWS S3 bucket, Azure Storage container, GCP cloud storage bucket all using this provider.</p>
+
+Menu
+----
+
+- [Pre-requisites](#pre-reqs)
+- [Examples](#examples)
+- [Future enhancements](#future)
+
+Pre-requisites
+----
+
+
+Examples
+----
+###AWS
+```terraform
+resource "ublob_blob" "aws_blob" {
+  bucket = "rrajesh1979-007"
+  cloud = "AWS"
+  region = "us-east-2"
+}
+
+output "ublob_aws_out" {
+  value = ublob_blob.aws_blob
+}
+```
+
+###GCP
+```terraform
+resource "ublob_blob" "gcp_blob" {
+  bucket = "rrajesh1979-001"
+  cloud = "GCP"
+  region = "asia"
+  project_id = "peer-poc"
+  storage_class = "Standard"
+}
+
+output "ublob_gcp_out" {
+  value = ublob_blob.gcp_blob
+}
+```
+
+###AZURE
+```terraform
+variable "storage_account_key" {
+  type = string
+}
+
+resource "ublob_blob" "az_blob" {
+  bucket = "tf-blob-2"
+  cloud = "AZURE"
+  region = "us"
+  storage_account = "rrajesh1979"
+  storage_account_key = var.storage_account_key
+}
+
+output "ublob_az_out" {
+  value = ublob_blob.az_blob
+}
+```
+
+Future enhancements
+----
