@@ -20,7 +20,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 )
 
-func resourceOrder() *schema.Resource {
+func resourceUblob() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceBlobCreate,
 		ReadContext:   resourceBlobRead,

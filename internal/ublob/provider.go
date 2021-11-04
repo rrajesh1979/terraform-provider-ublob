@@ -14,7 +14,7 @@ func Provider() *schema.Provider {
 			"ublob_meta": dataSourceMeta(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"ublob_blob": resourceOrder(),
+			"ublob_blob": resourceUblob(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
