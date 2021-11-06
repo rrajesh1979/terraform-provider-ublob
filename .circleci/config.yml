@@ -24,8 +24,6 @@ jobs:
           name: Install Dependencies
           command: |
             go mod download
-            sudo composer self-update
-            composer install -n --prefer-dist
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
@@ -52,9 +50,8 @@ jobs:
       - run:
           name: Run tests
           command: |
-            sudo docker-php-ext-enable xdebug
             ./cc-test-reporter before-build
-            sudo vendor/bin/phpunit --coverage-clover clover.xml
+            go test -coverprofile c.out ./...
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
 
 # Invoke jobs via workflows
