@@ -1,3 +1,12 @@
 tasks:
-  - init: go get && go build ./... && go test ./...
-    command: go run
+  - init: |
+      go get github.com/spf13/cobra/cobra
+      go build
+      go get && go build ./... && go test ./...
+    command: |
+      go run
+      ./mycli --help
+
+vscode:
+  extensions:
+    - golang.go
