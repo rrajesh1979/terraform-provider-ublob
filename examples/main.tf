@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     ublob = {
-      version = "0.0.2"
+      version = "0.0.3"
       source  = "hashicorp.com/rrajesh1979/ublob"
     }
   }
@@ -46,11 +46,11 @@ output "ublob_az_out" {
   value = ublob_blob.az_blob
 }
 
-module "myblob" {
-  source = "./ublob"
-}
-
-output "myblob" {
-  value = module.myblob.ublob_meta
-}
-
+#module "myblob" {
+#  source = "./ublob"
+#}
+#
+#output "myblob" {
+#  value = module.myblob.ublob_meta
+#}
+#

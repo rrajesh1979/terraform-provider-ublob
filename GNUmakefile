@@ -4,8 +4,8 @@ NAMESPACE=rrajesh1979
 NAME=ublob
 BINARY=terraform-provider-${NAME}
 VERSION=0.0.3
-#OS_ARCH=darwin_amd64
-OS_ARCH=linux_amd64
+OS_ARCH=darwin_amd64
+#OS_ARCH=linux_amd64
 
 default: install
 
