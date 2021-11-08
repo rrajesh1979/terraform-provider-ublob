@@ -6,6 +6,8 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: 6a45a8220dfcedcc9a5a4e3dcc193742cb49bfd1ec2785ab97106aeffb267710
     working_directory: ~/repo
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
@@ -20,7 +22,8 @@ jobs:
             - go-mod-v4-{{ checksum "go.sum" }}
       - run:
           name: Install Dependencies
-          command: go mod download
+          command: |
+            go mod download
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
@@ -38,6 +41,18 @@ jobs:
       - run:
           name: Upload coverage to Codecov
           command: bash <(curl -s https://codecov.io/bash)
+      # - run:
+      #     name: Setup Code Climate test-reporter
+      #     command: |
+      #       # download test reporter as a static binary
+      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      #       chmod +x ./cc-test-reporter
+      # - run:
+      #     name: Run tests
+      #     command: |
+      #       ./cc-test-reporter before-build
+      #       go test -coverprofile c.out ./...
+      #       ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
