@@ -24,8 +24,11 @@ Menu
 - [Future enhancements](#future-enhancements)
 - [Usage](#usage)
 
-Gitpod - environment with dependencies pre-installed and ready for you to develop 
+Gitpod 
 ----
+- Environment with dependencies pre-installed and ready for you to develop
+- Visual Studio Code with required extensions preloaded 
+
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/rrajesh1979/terraform-provider-ublob)
 
 
