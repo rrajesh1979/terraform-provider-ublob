@@ -24,9 +24,12 @@ Menu
 - [Future enhancements](#future-enhancements)
 - [Usage](#usage)
 
+Gitpod - environment with dependencies pre-installed and ready for you to develop 
+----
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/rrajesh1979/terraform-provider-ublob)
 
-Pre-requisites
+
+Pre-requisites to build your own environment
 ----
 1. Terraform
 2. Go SDK
