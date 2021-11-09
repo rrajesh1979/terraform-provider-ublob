@@ -14,8 +14,6 @@ tasks:
       cowsay "Installing GCP CLI"
       curl https://sdk.cloud.google.com > install.sh
       bash install.sh --disable-prompts
-      source /home/gitpod/google-cloud-sdk/path.bash.inc
-      source /home/gitpod/google-cloud-sdk/completion.bash.inc
 
       cowsay "Installing Terraform"
       sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
@@ -26,6 +24,8 @@ tasks:
       go build
       go get && go build ./... && go test ./...
     command: |
+      source /home/gitpod/google-cloud-sdk/path.bash.inc
+      source /home/gitpod/google-cloud-sdk/completion.bash.inc
       sudo apt-get update && sudo apt-get install terraform
       make install
       cd examples
