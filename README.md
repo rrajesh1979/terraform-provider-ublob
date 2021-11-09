@@ -143,3 +143,4 @@ Future enhancements
   - [ ] Code refactoring
   - [ ] Improve exception handling
   - [ ] Better logging and error handling
+  - [ ] Idiomatic go code
