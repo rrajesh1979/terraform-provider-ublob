@@ -20,6 +20,7 @@ func Provider() *schema.Provider {
 	}
 }
 
+//TODO: Add code here to initialize the provider
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics

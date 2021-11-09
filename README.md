@@ -14,6 +14,7 @@
 
 
 <h3>Experimental Terraform provider (custom) </h3>
+---
 <p>One provider to rule them all! Create an AWS S3 bucket, Azure Storage container, GCP cloud storage bucket all using this provider.</p>
 
 Menu
@@ -128,10 +129,17 @@ terraform init && terraform apply --auto-approve
 Future enhancements
 ----
 - This is an experimental Terraform provider that allows users to create a storage bucket in any of the cloud platforms - AWS, GCP and Azure
+- This Alpha release is to build a working version of the provider.
 - The current release is a basic version that only supports
   - Create resource
   - Destroy resource
-- Future enhancements would bring in
-  - Enhanced Read, Update, Import
-  - Support for fine-grained attributes
-- Add additional test cases
+- ###ToDo
+  - Functional
+  - [ ] Enhanced Read
+  - [ ] Implement Update, Import
+  - [ ] Support for fine-grained attributes for storage bucket - ex. permissions, versioning etc. 
+  - Non-Functional
+  - [ ] Add test cases
+  - [ ] Code refactoring
+  - [ ] Improve exception handling
+  - [ ] Better logging and error handling
