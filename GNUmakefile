@@ -4,8 +4,8 @@ NAMESPACE=rrajesh1979
 NAME=ublob
 BINARY=terraform-provider-${NAME}
 VERSION=0.0.4
-OS_ARCH=darwin_amd64
-#OS_ARCH=linux_amd64
+#OS_ARCH=darwin_amd64
+OS_ARCH=linux_amd64
 
 default: install
 
@@ -18,6 +18,9 @@ release:
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	#Adding a build for Mac by default
+	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/darwin_amd64
+	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/darwin_amd64
 
 test:
 	go test -i $(TEST) || exit 1
